@@ -20,6 +20,8 @@ app.use("/api/questions", require("./routes/questionRoutes"));
 //users route
 app.use("/api/users", require("./routes/userRoutes"));
 
+//answers route
+app.use("/api/answer", require("./routes/answerRoutes"));
 
 //overwrite default express errorHandler 
 app.use(errorHandler)
