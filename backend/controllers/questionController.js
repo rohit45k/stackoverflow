@@ -1,12 +1,14 @@
 const asyncHandler = require("express-async-handler");
-const Question = require("../models/questionModel")
+const Question = require("../models/questionModel");
+const User = require("../models/userModel");
+
 
 //@desc     GET all Questions related to a user
 //@route    GET /api/questions
 //@access   Private
 const getQuestions = asyncHandler(async (req, res) => {
 
-    const questions = await Question.find();
+    const questions = await Question.find({ user: req.user.id });
 
     res.status(200).json({
         success: true,
@@ -25,6 +27,7 @@ const setQuestion = asyncHandler(async (req, res) => {
     }
 
     const question = await Question.create({
+        user: req.user.id,
         title: req.body.title,
         body: req.body.body,
         upvotes: req.body.upvotes,
@@ -50,6 +53,18 @@ const editQuestion = asyncHandler(async (req, res) => {
         throw new Error("Question not found")
     }
 
+    const user = await User.findById(req.user.id);
+
+    if(!user) {
+        res.status(401)
+        throw new Error("User not found")
+    }
+
+    if(question.user.toString() !== user.id) {
+        res.status(401)
+        throw new Error("User access denied")
+    }
+
     const updatedQuestion = await Question.findByIdAndUpdate(req.params.id, req.body, {new: true})
 
     res.status(200).json({
@@ -69,6 +84,18 @@ const deleteQuestion = asyncHandler(async (req, res) => {
     if(!question) {
         res.status(400)
         throw new Error("Question not found")
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if(!user) {
+        res.status(401)
+        throw new Error("User not found")
+    }
+
+    if(question.user.toString() !== user.id) {
+        res.status(401)
+        throw new Error("User access denied")
     }
 
     await Question.findByIdAndDelete(req.params.id)

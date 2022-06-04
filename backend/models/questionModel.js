@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const questionSchema = mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, "Please add a user id"],
+        ref: "User"
+    },
     title: {
         type: String,
         required: [true, "Please add title field"]

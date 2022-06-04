@@ -17,6 +17,9 @@ app.use(express.urlencoded({ extended: false}))
 //questions route
 app.use("/api/questions", require("./routes/questionRoutes"));
 
+//users route
+app.use("/api/users", require("./routes/userRoutes"));
+
 
 //overwrite default express errorHandler 
 app.use(errorHandler)
